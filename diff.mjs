@@ -21,7 +21,7 @@ for (const doc of docs) {
   console.log(
     diff(original, hacked, {
       aAnnotation: "Original",
-      bAnnotation: "Modified",
+      bAnnotation: "Hacked",
       contextLines: 1,
       expand: false,
       omitAnnotationLines: false,
