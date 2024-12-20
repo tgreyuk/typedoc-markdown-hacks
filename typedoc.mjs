@@ -12,6 +12,7 @@ export default {
   hideBreadcrumbs: true,
   hidePageHeader: true,
   hidePageTitle: true,
+  readme: "none",
   plugin: [HACK ? "./theme.mjs" : null, "typedoc-plugin-markdown"].filter(
     Boolean,
   ),
