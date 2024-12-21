@@ -1,30 +1,44 @@
-import { readdirSync, readFileSync } from "fs";
-import { resolve, join } from "path";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { stripVTControlCharacters } from "node:util";
 import { diff } from "jest-diff";
+import prettier from "prettier";
 
-const docs = readdirSync("./docs", { withFileTypes: true }).filter(
-  (d) => d.name.endsWith(".md") && d.name !== "index.md",
-);
-
-const docsWithHacks = resolve("./docs-with-hacks");
-
-for (const doc of docs) {
-  const original = readFileSync(join(doc.parentPath, doc.name), {
-    encoding: "utf-8",
-  });
-  const hacked = readFileSync(join(docsWithHacks, doc.name), {
-    encoding: "utf-8",
-  });
-  console.log("=".repeat(40));
-  console.log(doc.name);
-  console.log("=".repeat(40));
-  console.log(
-    diff(original, hacked, {
-      aAnnotation: "Original",
-      bAnnotation: "Hacked",
-      contextLines: 1,
-      expand: false,
-      omitAnnotationLines: false,
+const updateFile = async (file, fn) =>
+  writeFileSync(
+    file,
+    await prettier.format(fn(readFileSync(file).toString()), {
+      filepath: file,
+      ...(await prettier.resolveConfig(file)),
     }),
   );
-}
+
+const output = readdirSync("./docs", { withFileTypes: true })
+  .filter((d) => d.name.endsWith(".md") && d.name !== "index.md")
+  .flatMap((doc) => [
+    "=".repeat(40),
+    doc.name,
+    "=".repeat(40),
+    diff(
+      readFileSync(join(doc.parentPath, doc.name)).toString(),
+      readFileSync(join("./docs-with-hacks", doc.name)).toString(),
+      {
+        aAnnotation: "Original",
+        bAnnotation: "Hacked",
+        contextLines: 1,
+        expand: false,
+        omitAnnotationLines: false,
+      },
+    ),
+  ])
+  .join("\n")
+  .trim();
+
+await updateFile("./README.md", (contents) =>
+  contents.replace(
+    /^`{3,}patch$[\s\S]*^`{3,}$/m,
+    ["````patch", stripVTControlCharacters(output), "````"].join("\n"),
+  ),
+);
+
+console.log(output);
