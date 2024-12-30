@@ -20,8 +20,10 @@ new Cache(): Cache
 
 ###### Overrides
 
-`LRUCache<
+```ts
+LRUCache<
   CacheFetchContext,
   CacheFetchContext,
   CacheFetchContext
->.constructor`
+>.constructor
+```

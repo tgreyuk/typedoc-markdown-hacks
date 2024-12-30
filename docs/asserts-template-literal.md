@@ -30,7 +30,7 @@ function asIntegrity(i): `sha512-${string}`
 
 #### Returns
 
-\`sha512-$\{string\}\`
+`` `sha512-${string}` ``
 
 ***
 
@@ -48,7 +48,7 @@ function assertIntegrity(i): asserts i is `sha512-${string}`
 
 #### Returns
 
-asserts i is \`sha512-$\{string\}\`
+`` asserts i is `sha512-${string}` ``
 
 ***
 
@@ -102,7 +102,7 @@ function isIntegrity(i): i is `sha512-${string}`
 
 #### Returns
 
-i is \`sha512-$\{string\}\`
+`` i is `sha512-${string}` ``
 
 ***
 
